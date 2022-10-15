@@ -17,16 +17,18 @@ class DataIngestion:
     def __init__(self, data_ingestion_config: DataIngestionConfig, mongo_op: MongoDBOperation):
         self.data_ingestion_config = data_ingestion_config
         self.mongo_op = mongo_op
+        
 
     # This method will fetch data from mongoDB
     def get_data_from_mongodb(self) -> DataFrame:
+
         '''
         Method Name :   get_data_from_mongodb
+
         Description :   This method fetches data from MongoDB database. 
         
         Output      :   DataFrame 
         '''
-
         logger.info("Entered get_data_from_mongodb method of Data_Ingestion class")
         try:
             logger.info("Getting the dataframe from mongodb")
@@ -44,15 +46,17 @@ class DataIngestion:
         except Exception as e:
             raise CarException(e, sys) from e
 
+
     # This method will split the data 
     def split_data_as_train_test(self, df:DataFrame) -> Tuple[DataFrame, DataFrame]:
+
         '''
         Method Name :   split_data_as_train_test
+
         Description :   This method splits the dataframe into train set and test set based on split ratio.
         
         Output      :  Train DataFrame and Test DataFrame 
         '''
-
         logger.info(
             "Entered split_data_as_train_test method of Data_Ingestion class"
         )
@@ -92,14 +96,16 @@ class DataIngestion:
             raise CarException(e, sys) from e
 
 
+    # This method initiates data ingestion 
     def initiate_data_ingestion(self) -> DataIngestionArtifacts:
+
         '''
         Method Name :   initiate_data_ingestion
+
         Description :   This method initiates data ingestion.
         
         Output      :   Data ingestion artifact 
         '''
-
         logger.info(
             "Entered initiate_data_ingestion method of Data_Ingestion class"
         )
