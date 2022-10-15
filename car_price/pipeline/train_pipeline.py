@@ -1,7 +1,11 @@
 import sys
 from car_price.configuration.mongo_operations import MongoDBOperation
-from car_price.entity.artifacts_entity import DataIngestionArtifacts, DataTransformationArtifacts, DataValidationArtifacts, ModelEvaluationArtifact, ModelPusherArtifacts, ModelTrainerArtifacts
-from car_price.entity.config_entity import DataIngestionConfig, DataTransformationConfig, DataValidationConfig, ModelEvaluationConfig, ModelPusherConfig, ModelTrainerConfig
+from car_price.entity.artifacts_entity import (DataIngestionArtifacts, DataTransformationArtifacts, 
+                                                DataValidationArtifacts, ModelEvaluationArtifact, 
+                                                ModelPusherArtifacts, ModelTrainerArtifacts)
+from car_price.entity.config_entity import (DataIngestionConfig, DataTransformationConfig, 
+                                                DataValidationConfig, ModelEvaluationConfig, 
+                                                ModelPusherConfig, ModelTrainerConfig)
 from car_price.components.data_ingestion import DataIngestion
 from car_price.components.data_transformation import DataTransformation
 from car_price.components.data_validation import DataValidation
@@ -12,10 +16,13 @@ from car_price.configuration.s3_operations import S3Operation
 from car_price.exception import CarException
 import logging
 
+# initializing logger
 logger = logging.getLogger(__name__)
+
 
 class TrainPipeline:
     def __init__(self):
+        # Creating variables for configurations
         self.data_ingestion_config = DataIngestionConfig()
         self.data_validation_config = DataValidationConfig()
         self.data_transformation_config = DataTransformationConfig()
@@ -25,7 +32,16 @@ class TrainPipeline:
         self.mongo_op = MongoDBOperation()
         self.s3_operations = S3Operation()
 
+
     def start_data_ingestion(self) -> DataIngestionArtifacts:
+
+        '''
+        Method Name :   start_data_ingestion
+
+        Description :   This method initiates data ingestion. 
+        
+        Output      :   Data ingestion artifact
+        '''
         logger.info("Entered the start_data_ingestion method of TrainPipeline class")
         try:
             logger.info("Getting the data from mongodb")
@@ -42,6 +58,14 @@ class TrainPipeline:
 
     
     def start_data_validation(self, data_ingestion_artifact: DataIngestionArtifacts) -> DataValidationArtifacts:
+
+        '''
+        Method Name :   start_data_validation
+
+        Description :   This method initiates data validation. 
+        
+        Output      :   Data validation artifacts 
+        '''
         logger.info("Entered the start_data_validation method of TrainPipeline class")
         try:
             data_validation = DataValidation(data_ingestion_artifacts=data_ingestion_artifact, data_validation_config=self.data_validation_config)
@@ -57,6 +81,14 @@ class TrainPipeline:
 
 
     def start_data_transformation(self, data_ingestion_artifact: DataIngestionArtifacts) -> DataTransformationArtifacts:
+
+        '''
+        Method Name :   start_data_transformation
+
+        Description :   This method initiates data transformation. 
+        
+        Output      :   Data transformation artifacts
+        '''
         logger.info(
             "Entered the start_data_transformation method of TrainPipeline class"
         )
@@ -72,7 +104,16 @@ class TrainPipeline:
         except Exception as e:
             raise CarException(e, sys) from e
 
+
     def start_model_trainer(self, data_transformation_artifact: DataTransformationArtifacts) -> ModelTrainerArtifacts:
+
+        '''
+        Method Name :   start_model_trainer
+
+        Description :   This method initiates model trainer. 
+        
+        Output      :   Model trainer artifcats
+        '''
         try:
             model_trainer = ModelTrainer(data_transformation_artifact=data_transformation_artifact,
                                          model_trainer_config=self.model_trainer_config
@@ -83,8 +124,17 @@ class TrainPipeline:
         except Exception as e:
             raise CarException(e, sys) from e
 
+
     def start_model_evaluation(self, data_ingestion_artifact: DataIngestionArtifacts,
                                model_trainer_artifact: ModelTrainerArtifacts) -> ModelEvaluationArtifact:
+
+        '''
+        Method Name :   start_model_evaluation
+
+        Description :   This method initiates Model evaluation. 
+        
+        Output      :   Model evaluation artifacts
+        '''
         try:
             model_evaluation = ModelEvaluation(model_evaluation_config=self.model_evaluation_config,
                                                data_ingestion_artifact=data_ingestion_artifact,
@@ -95,8 +145,17 @@ class TrainPipeline:
         except Exception as e:
             raise CarException(e, sys) from e
 
+
     def start_model_pusher(self, model_trainer_artifacts: ModelTrainerArtifacts, s3: S3Operation, 
                             data_transformation_artifacts: DataTransformationArtifacts) -> ModelPusherArtifacts:
+
+        '''
+        Method Name :   start_model_pusher
+
+        Description :   This method initiates model pusher. 
+        
+        Output      :   Model pusher artifacts 
+        '''
         logger.info("Entered the start_model_pusher method of TrainPipeline class")
         try:
             model_pusher = ModelPusher(model_pusher_config=self.model_pusher_config, model_trainer_artifacts=model_trainer_artifacts, 
@@ -111,6 +170,14 @@ class TrainPipeline:
 
 
     def run_pipeline(self) -> None:
+
+        '''
+        Method Name :   run_pipeline
+
+        Description :   This method runs the pipeline. 
+        
+        Output      :   None
+        '''
         logger.info("Entered the run_pipeline method of TrainPipeline class")
         try:
             data_ingestion_artifact = self.start_data_ingestion()

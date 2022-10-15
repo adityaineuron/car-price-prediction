@@ -7,6 +7,7 @@ from car_price.constant import *
 from car_price.configuration.s3_operations import S3Operation
 from car_price.exception import CarException
 
+# initializing logger
 logger = logging.getLogger(__name__)
 
 class CarData:
@@ -24,8 +25,17 @@ class CarData:
 
 
     def get_data(self) -> Dict:
+
+        '''
+        Method Name :   get_data
+
+        Description :   This method gets data. 
+        
+        Output      :    Input data in dictionary
+        '''
         logger.info("Entered get_data method of SensorData class")
         try:
+            # Saving the features as dictionary 
             input_data = {
                 "car_name": [self.car_name],
                 "vehicle_age": [self.vehicle_age],
@@ -38,6 +48,8 @@ class CarData:
                 "max_power": [self.max_power],
                 "seats": [self.seats]
                 }
+
+            logger.info("Exited get_data method of SensorData class")
             return input_data
         
         except Exception as e:
@@ -45,11 +57,21 @@ class CarData:
 
 
     def get_carprice_input_data_frame(self) -> DataFrame:
+
+        '''
+        Method Name :   get_carprice_input_data_frame
+
+        Description :   This method converts dictionary data into dataframe. 
+        
+        Output      :    DataFrame 
+        '''
         logger.info(
             "Entered get_carprice_input_data_frame method of CarPriceData class"
         )
         try:
+            # Getting the data in dictionary format
             carprice_input_dict = self.get_data()
+
             logger.info("Got car data as dict")
             logger.info(
                 "Exited get_carprice_input_data_frame method of CarPriceData class"
@@ -66,11 +88,22 @@ class CarPricePredictor:
         self.bucket_name = BUCKET_NAME
 
 
-    def predict(self, X) -> None:
+    def predict(self, X) -> float:
+
+        '''
+        Method Name :   predict
+
+        Description :   This method predicts the data. 
+        
+        Output      :   Predictions 
+        '''
         logger.info("Entered predict method of CarPricePredictor class")
         try:
+            # Loading the best model from s3 bucket
             best_model = self.s3.load_model(MODEL_FILE_NAME, self.bucket_name)
             logger.info("Loaded best model from s3 bucket")
+
+            # Predicting with best model
             result = best_model.predict(X)
             logger.info("Exited predict method of CarPricePredictor class")
             return result

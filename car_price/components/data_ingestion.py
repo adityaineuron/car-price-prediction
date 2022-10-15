@@ -10,14 +10,14 @@ from car_price.entity.config_entity import DataIngestionConfig
 from car_price.entity.artifacts_entity import DataIngestionArtifacts
 from car_price.constant import TEST_SIZE
 
-# Initialized logger
+# Initializing logger
 logger = logging.getLogger(__name__)
 
 class DataIngestion:
     def __init__(self, data_ingestion_config: DataIngestionConfig, mongo_op: MongoDBOperation):
         self.data_ingestion_config = data_ingestion_config
         self.mongo_op = mongo_op
-        
+
 
     # This method will fetch data from mongoDB
     def get_data_from_mongodb(self) -> DataFrame:

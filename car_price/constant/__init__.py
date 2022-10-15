@@ -1,7 +1,6 @@
 import os
 from os import environ
 from datetime import datetime
-
 from from_root.root import from_root
 
 TIMESTAMP: str = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
@@ -10,6 +9,7 @@ TARGET_COLUMN = 'selling_price'
 
 CONFIG_FILE_PATH = "config/config.yaml"
 SCHEMA_FILE_PATH = "config/schema.yaml"
+MODEL_SCHEMA_FILE_PATH = "config/model.yaml"
 
 DB_NAME = 'ineuron'
 COLLECTION_NAME = 'car'
