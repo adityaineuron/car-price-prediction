@@ -1,29 +1,81 @@
 # 🚗 Used Car Price Prediction
 
-This project aims to solve the problem of predicting the price of a used car, using Sklearn's supervised machine learning techniques. It is a regression problem and predictions are carried out on dataset of used car sales in the Indian car market Cardheko website. Several regression techniques have been studied, including XGboost and Random forests of decision trees.
+## Problem statement
+There are many used car buyers and sellers in India. The majority of people today have the dream of owning a car because cars have become a necessity. However, people often purchase used cars as a result of a lack of funds. On the other hand, those in need of cash sell their vehicles. The biggest query, however, is how much should a car cost? With the help of a car's attributes and machine learning algorithms, it is now possible to predict an approximate used car price.
 
-Their performances were compared in order to determine which one works best with out dataset and used them to predict the price of a used car from user input from Flask application.
+## Solution Proposed
+It is a regression issue, and predictions are made using data from the Cardheko website, which tracks sales of used cars in India. Numerous regression methods, such as XGboost and Random forest of decision trees, have been explored and constructed a machine learning model that could be integrated into a client's website to allow customers to predict the prices of used cars.
 
-Archt
+## Dataset used
+CarDekho is a review-sharing website that offers images, videos, and reviews of various vehicles that can be purchased in India. For this project, we will be considering the used car section of this Gateway.
 
-💿 Installing
-1. Environment setup.
+## Tech Stack Used
+1. Python 
+2. FastAPI 
+3. Machine learning algorithms
+4. Docker
+5. MongoDB
+
+## Infrastructure required
+1. AWS S3
+2. AWS EC2
+3. Github Actions
+
+## How to run
+Before you run this project make sure you have MongoDB Atlas account and you have the Car dekho dataset into it.
+
+Step 1. Cloning the repository.
+```
+git clone https://github.com/Machine-Learning-01/car-price-prediction.git
+```
+Step 2. Create a conda environment.
 ```
 conda create --prefix venv python=3.9 -y
 ```
 ```
 conda activate venv/
 ````
-2. Install Requirements and setup
+Step 3. Install the requirements 
 ```
 pip install -r requirements.txt
 ```
-5. Run Application
+Step 4. Export the environment variable
+```bash
+export AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
+
+export AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
+
+export AWS_DEFAULT_REGION=<AWS_DEFAULT_REGION>
+
+export MONGODB_URL="mongodb+srv://<username>:<password>@ineuron-ai-projects.7eh1w4s.mongodb.net/?retryWrites=true&w=majority"
+
 ```
-python main.py
+Step 5. Run the application server
+```
+python app.py
+```
+Step 6. Train application
+```bash
+http://localhost:8080/train
+```
+Step 7. Prediction application
+```bash
+http://localhost:8080/predict
+```
+## Run locally
+
+1. Check if the Dockerfile is available in the project directory
+
+2. Build the Docker image
+```
+docker build --build-arg AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID> --build-arg AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY> --build-arg AWS_DEFAULT_REGION=<AWS_DEFAULT_REGION> --build-arg MONGODB_URL=<MONGODB_URL> . 
 ```
 
-Project Architecture - 
+3. Run the Docker image
+```
+docker run -d -p 8080:8080 <IMAGE_NAME>
+```
+## Project Architecture - 
 
 ![WhatsApp Image 2022-09-22 at 15 29 04](https://user-images.githubusercontent.com/71321529/192722300-b906b222-63f7-452b-8e30-e234405031f2.jpeg)
 
@@ -32,16 +84,6 @@ Project Architecture -
 
 ![WhatsApp Image 2022-09-22 at 15 29 19](https://user-images.githubusercontent.com/71321529/192722336-54016f79-89ef-4c8c-9d71-a6e91ebab03f.jpeg)
 
-In Github Secrets, give your AWS credentials and MongoDB creds
-
-Creds - AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION, MONGODB_URL, ECR_REPO, HOSTNAME and AWS_PRIVATE_KEY as 
-
-
-🔧 Built with
-- FastAPI
-- Python 3.7.6
-- Machine learning
-- 🏦 Industrial Use Cases
 
 ## Models Used
 * Linear Regression
