@@ -76,13 +76,11 @@ class S3Operation:
         """
         try:
             bucket = self.get_bucket(bucket_name)
-            status = None
             file_objects = [file_object for file_object in bucket.objects.filter(Prefix=s3_model_key)]
             if len(file_objects) > 0:
-                status == True
+                return True
             else:
-                status == False
-            return status
+                return False
 
         except Exception as e:
             raise CarException(e, sys) from e

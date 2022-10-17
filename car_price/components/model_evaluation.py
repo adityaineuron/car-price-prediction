@@ -43,8 +43,7 @@ class ModelEvaluation:
         logger.info("Entered the get_s3_model method of Model Evaluation class")
         try:
             # Checking whether model is present in S3 bucket or not
-            s3_model_key = os.path.join(S3_MODEL_NAME)
-            status = self.model_evaluation_config.S3_OPERATIONS.is_model_present(BUCKET_NAME, s3_model_key)
+            status = self.model_evaluation_config.S3_OPERATIONS.is_model_present(BUCKET_NAME, S3_MODEL_NAME)
             logger.info(f"Got the status - is model present? -> {status}")
 
             # If model is present then loading the model
@@ -54,7 +53,7 @@ class ModelEvaluation:
                 return model
 
             else:
-                pass
+                None
 
         except Exception as e:
             raise CarException(e, sys) from e
