@@ -1,0 +1,6 @@
+artifacts
+car_price.egg-info
+env
+venv
+notebooks
+demo.py
