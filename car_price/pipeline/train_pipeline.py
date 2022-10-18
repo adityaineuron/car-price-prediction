@@ -4,8 +4,8 @@ from car_price.entity.artifacts_entity import (DataIngestionArtifacts, DataTrans
                                                 DataValidationArtifacts, ModelEvaluationArtifact, 
                                                 ModelPusherArtifacts, ModelTrainerArtifacts)
 from car_price.entity.config_entity import (DataIngestionConfig, DataTransformationConfig, 
-                                                DataValidationConfig, ModelEvaluationConfig, 
-                                                ModelPusherConfig, ModelTrainerConfig)
+                                            DataValidationConfig, ModelEvaluationConfig, 
+                                            ModelPusherConfig, ModelTrainerConfig)
 from car_price.components.data_ingestion import DataIngestion
 from car_price.components.data_transformation import DataTransformation
 from car_price.components.data_validation import DataValidation
@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 
 class TrainPipeline:
     def __init__(self):
-        # Creating variables for configurations
         self.data_ingestion_config = DataIngestionConfig()
         self.data_validation_config = DataValidationConfig()
         self.data_transformation_config = DataTransformationConfig()
@@ -33,15 +32,8 @@ class TrainPipeline:
         self.s3_operations = S3Operation()
 
 
+    # This method is used to start the data ingestion 
     def start_data_ingestion(self) -> DataIngestionArtifacts:
-
-        '''
-        Method Name :   start_data_ingestion
-
-        Description :   This method initiates data ingestion. 
-        
-        Output      :   Data ingestion artifact
-        '''
         logger.info("Entered the start_data_ingestion method of TrainPipeline class")
         try:
             logger.info("Getting the data from mongodb")
@@ -57,15 +49,8 @@ class TrainPipeline:
             raise CarException(e, sys) from e
 
     
+    # This method is used to start the data validation
     def start_data_validation(self, data_ingestion_artifact: DataIngestionArtifacts) -> DataValidationArtifacts:
-
-        '''
-        Method Name :   start_data_validation
-
-        Description :   This method initiates data validation. 
-        
-        Output      :   Data validation artifacts 
-        '''
         logger.info("Entered the start_data_validation method of TrainPipeline class")
         try:
             data_validation = DataValidation(data_ingestion_artifacts=data_ingestion_artifact, data_validation_config=self.data_validation_config)
@@ -80,15 +65,8 @@ class TrainPipeline:
             raise CarException(e, sys) from e
 
 
+    # This method is used to start the data transformation
     def start_data_transformation(self, data_ingestion_artifact: DataIngestionArtifacts) -> DataTransformationArtifacts:
-
-        '''
-        Method Name :   start_data_transformation
-
-        Description :   This method initiates data transformation. 
-        
-        Output      :   Data transformation artifacts
-        '''
         logger.info(
             "Entered the start_data_transformation method of TrainPipeline class"
         )
@@ -105,15 +83,8 @@ class TrainPipeline:
             raise CarException(e, sys) from e
 
 
+    # This method is used to start the model trainer
     def start_model_trainer(self, data_transformation_artifact: DataTransformationArtifacts) -> ModelTrainerArtifacts:
-
-        '''
-        Method Name :   start_model_trainer
-
-        Description :   This method initiates model trainer. 
-        
-        Output      :   Model trainer artifcats
-        '''
         try:
             model_trainer = ModelTrainer(data_transformation_artifact=data_transformation_artifact,
                                          model_trainer_config=self.model_trainer_config
@@ -125,16 +96,9 @@ class TrainPipeline:
             raise CarException(e, sys) from e
 
 
+    # This method is used to start the model evaluation
     def start_model_evaluation(self, data_ingestion_artifact: DataIngestionArtifacts,
                                model_trainer_artifact: ModelTrainerArtifacts) -> ModelEvaluationArtifact:
-
-        '''
-        Method Name :   start_model_evaluation
-
-        Description :   This method initiates Model evaluation. 
-        
-        Output      :   Model evaluation artifacts
-        '''
         try:
             model_evaluation = ModelEvaluation(model_evaluation_config=self.model_evaluation_config,
                                                data_ingestion_artifact=data_ingestion_artifact,
@@ -146,16 +110,9 @@ class TrainPipeline:
             raise CarException(e, sys) from e
 
 
+    # This method is used to start the model pusher
     def start_model_pusher(self, model_trainer_artifacts: ModelTrainerArtifacts, s3: S3Operation, 
                             data_transformation_artifacts: DataTransformationArtifacts) -> ModelPusherArtifacts:
-
-        '''
-        Method Name :   start_model_pusher
-
-        Description :   This method initiates model pusher. 
-        
-        Output      :   Model pusher artifacts 
-        '''
         logger.info("Entered the start_model_pusher method of TrainPipeline class")
         try:
             model_pusher = ModelPusher(model_pusher_config=self.model_pusher_config, model_trainer_artifacts=model_trainer_artifacts, 
@@ -169,21 +126,18 @@ class TrainPipeline:
             raise CarException(e, sys) from e
 
 
+    # This method is used to start the training pipeline
     def run_pipeline(self) -> None:
-
-        '''
-        Method Name :   run_pipeline
-
-        Description :   This method runs the pipeline. 
-        
-        Output      :   None
-        '''
         logger.info("Entered the run_pipeline method of TrainPipeline class")
         try:
             data_ingestion_artifact = self.start_data_ingestion()
+            
             data_validation_artifact = self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
+            
             data_transformation_artifact = self.start_data_transformation(data_ingestion_artifact=data_ingestion_artifact)
+            
             model_trainer_artifact = self.start_model_trainer(data_transformation_artifact=data_transformation_artifact)
+            
             model_evaluation_artifact = self.start_model_evaluation(data_ingestion_artifact=data_ingestion_artifact,
                                                                     model_trainer_artifact=model_trainer_artifact)
             if not model_evaluation_artifact.is_model_accepted:

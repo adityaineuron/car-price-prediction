@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from car_price.configuration.s3_operations import S3Operation
 from car_price.utils.main_utils import MainUtils
 
 from car_price.components.model_predictor import CarPricePredictor, CarData
