@@ -138,8 +138,8 @@ class ModelTrainer:
 
             # Updating the model score to model config file if the the model score is greater than the base model score
             if best_model_score >= base_model_score:
-                self.model_trainer_config.UTILS.update_model_score(best_model_score)
-                logger.info("Updating model score in yaml file")
+                # self.model_trainer_config.UTILS.update_model_score(best_model_score)
+                # logger.info("Updating model score in yaml file")
 
                 # Loading car price model object with preprocessor and model
                 carprice_model = CarPriceModel(preprocessing_obj, best_model)
