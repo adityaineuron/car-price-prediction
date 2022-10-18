@@ -10,8 +10,21 @@ from car_price.exception import CarException
 # initializing logger
 logger = logging.getLogger(__name__)
 
+
 class CarData:
-    def __init__(self, car_name, vehicle_age, km_driven, seller_type, fuel_type, transmission_type, mileage, engine, max_power, seats):
+    def __init__(
+        self,
+        car_name,
+        vehicle_age,
+        km_driven,
+        seller_type,
+        fuel_type,
+        transmission_type,
+        mileage,
+        engine,
+        max_power,
+        seats,
+    ):
         self.car_name = car_name
         self.vehicle_age = vehicle_age
         self.km_driven = km_driven
@@ -23,19 +36,18 @@ class CarData:
         self.max_power = max_power
         self.seats = seats
 
-
     def get_data(self) -> Dict:
 
-        '''
+        """
         Method Name :   get_data
 
         Description :   This method gets data. 
         
         Output      :    Input data in dictionary
-        '''
+        """
         logger.info("Entered get_data method of SensorData class")
         try:
-            # Saving the features as dictionary 
+            # Saving the features as dictionary
             input_data = {
                 "car_name": [self.car_name],
                 "vehicle_age": [self.vehicle_age],
@@ -46,25 +58,24 @@ class CarData:
                 "mileage": [self.mileage],
                 "engine": [self.engine],
                 "max_power": [self.max_power],
-                "seats": [self.seats]
-                }
+                "seats": [self.seats],
+            }
 
             logger.info("Exited get_data method of SensorData class")
             return input_data
-        
+
         except Exception as e:
             raise CarException(e, sys)
 
-
     def get_carprice_input_data_frame(self) -> DataFrame:
 
-        '''
+        """
         Method Name :   get_carprice_input_data_frame
 
         Description :   This method converts dictionary data into dataframe. 
         
         Output      :    DataFrame 
-        '''
+        """
         logger.info(
             "Entered get_carprice_input_data_frame method of CarPriceData class"
         )
@@ -87,16 +98,15 @@ class CarPricePredictor:
         self.s3 = S3Operation()
         self.bucket_name = BUCKET_NAME
 
-
     def predict(self, X) -> float:
 
-        '''
+        """
         Method Name :   predict
 
         Description :   This method predicts the data. 
         
         Output      :   Predictions 
-        '''
+        """
         logger.info("Entered predict method of CarPricePredictor class")
         try:
             # Loading the best model from s3 bucket

@@ -18,7 +18,6 @@ class MongoDBOperation:
         self.DB_URL = DB_URL
         self.client = MongoClient(self.DB_URL)
 
-
     def get_database(self, db_name) -> Database:
 
         """
@@ -40,7 +39,6 @@ class MongoDBOperation:
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     @staticmethod
     def get_collection(database, collection_name) -> Collection:
@@ -64,7 +62,6 @@ class MongoDBOperation:
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     def get_collection_as_dataframe(self, db_name, collection_name) -> DataFrame:
 
@@ -98,7 +95,6 @@ class MongoDBOperation:
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     def insert_dataframe_as_record(self, data_frame, db_name, collection_name) -> None:
         """

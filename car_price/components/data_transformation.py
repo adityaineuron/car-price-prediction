@@ -8,7 +8,10 @@ from category_encoders.binary import BinaryEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from car_price.entity.config_entity import DataTransformationConfig
-from car_price.entity.artifacts_entity import DataIngestionArtifacts, DataTransformationArtifacts
+from car_price.entity.artifacts_entity import (
+    DataIngestionArtifacts,
+    DataTransformationArtifacts,
+)
 from car_price.exception import CarException
 
 # Initializing logger
@@ -16,8 +19,11 @@ logger = logging.getLogger(__name__)
 
 
 class DataTransformation:
-    def __init__(self, data_ingestion_artifacts: DataIngestionArtifacts, 
-                    data_transformation_config: DataTransformationConfig):
+    def __init__(
+        self,
+        data_ingestion_artifacts: DataIngestionArtifacts,
+        data_transformation_config: DataTransformationConfig,
+    ):
 
         self.data_ingestion_artifacts = data_ingestion_artifacts
         self.data_transformation_config = data_transformation_config
@@ -26,32 +32,37 @@ class DataTransformation:
         self.train_set = pd.read_csv(self.data_ingestion_artifacts.train_data_file_path)
         self.test_set = pd.read_csv(self.data_ingestion_artifacts.test_data_file_path)
 
-
     # This method is used to get the transformer object
     def get_data_transformer_object(self) -> object:
 
-        '''
+        """
         Method Name :   get_data_transformer_object
 
         Description :   This method gives preprocessor object. 
         
         Output      :   Preprocessor Object. 
-        '''
+        """
         logger.info(
             "Entered get_data_transformer_object method of Data_Ingestion class"
         )
         try:
             # Getting necessary column names from config file
-            numerical_columns = self.data_transformation_config.SCHEMA_CONFIG["numerical_columns"]
-            onehot_columns = self.data_transformation_config.SCHEMA_CONFIG["onehot_columns"]
-            binary_columns = self.data_transformation_config.SCHEMA_CONFIG["binary_columns"]
+            numerical_columns = self.data_transformation_config.SCHEMA_CONFIG[
+                "numerical_columns"
+            ]
+            onehot_columns = self.data_transformation_config.SCHEMA_CONFIG[
+                "onehot_columns"
+            ]
+            binary_columns = self.data_transformation_config.SCHEMA_CONFIG[
+                "binary_columns"
+            ]
             logger.info(
                 "Got numerical cols,one hot cols,binary cols from schema config"
             )
 
             # Creating transformer objects
             numeric_transformer = StandardScaler()
-            oh_transformer = OneHotEncoder(handle_unknown='ignore')
+            oh_transformer = OneHotEncoder(handle_unknown="ignore")
             binary_transformer = BinaryEncoder()
             logger.info("Initialized StandardScaler,OneHotEncoder,BinaryEncoder")
 
@@ -73,18 +84,17 @@ class DataTransformation:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     # This is static method for capping the outliers
     @staticmethod
     def _outlier_capping(col, df: DataFrame) -> DataFrame:
 
-        '''
+        """
         Method Name :   _outlier_capping
 
         Description :   This method performs outlier capping in the dataframe. 
         
         Output      :   DataFrame. 
-        '''
+        """
         logger.info("Entered _outlier_capping method of Data_Transformation class")
         try:
             logger.info("Performing _outlier_capping for columns in the dataframe")
@@ -109,31 +119,39 @@ class DataTransformation:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     # This method is used to initialize data transformation
     def initiate_data_transformation(self) -> DataTransformationArtifacts:
 
-        '''
+        """
         Method Name :   initiate_data_transformation
 
         Description :   This method initiates data transformation. 
         
         Output      :   Data Transformation Artifacts. 
-        '''
+        """
         logger.info(
             "Entered initiate_data_transformation method of Data_Transformation class"
         )
         try:
             # Creating directory for data transformation artifacts
-            os.makedirs(self.data_transformation_config.DATA_TRANSFORMATION_ARTIFACTS_DIR, exist_ok=True)
-            logger.info(f"Created artifacts directory for {os.path.basename(self.data_transformation_config.DATA_TRANSFORMATION_ARTIFACTS_DIR)}")
+            os.makedirs(
+                self.data_transformation_config.DATA_TRANSFORMATION_ARTIFACTS_DIR,
+                exist_ok=True,
+            )
+            logger.info(
+                f"Created artifacts directory for {os.path.basename(self.data_transformation_config.DATA_TRANSFORMATION_ARTIFACTS_DIR)}"
+            )
 
             # Getting preprocessor object
             preprocessor = self.get_data_transformer_object()
             logger.info("Got the preprocessor object")
 
-            target_column_name = self.data_transformation_config.SCHEMA_CONFIG["target_column"]    # Getting traget column name from schema file
-            numerical_columns = self.data_transformation_config.SCHEMA_CONFIG["numerical_columns"] # Getting numerical columns from schema file
+            target_column_name = self.data_transformation_config.SCHEMA_CONFIG[
+                "target_column"
+            ]  # Getting traget column name from schema file
+            numerical_columns = self.data_transformation_config.SCHEMA_CONFIG[
+                "numerical_columns"
+            ]  # Getting numerical columns from schema file
             logger.info(
                 "Got target column name and numerical columns from schema config"
             )
@@ -158,7 +176,9 @@ class DataTransformation:
             logger.info("Got train features and test feature")
 
             # Getting the input features and target feature of Testing dataset
-            input_feature_test_df = self.test_set.drop(columns=[target_column_name], axis=1)
+            input_feature_test_df = self.test_set.drop(
+                columns=[target_column_name], axis=1
+            )
             target_feature_test_df = self.test_set[target_column_name]
             logger.info("Got train features and test feature")
 
@@ -168,34 +188,55 @@ class DataTransformation:
             logger.info("Used the preprocessor object to transform the test features")
 
             # Concatinating input feature array and target feature array of Train dataset
-            train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df)]
+            train_arr = np.c_[
+                input_feature_train_arr, np.array(target_feature_train_df)
+            ]
             logger.info("Created train array.")
 
             # Creating direcory for transformed train dataset array and saving the array
-            os.makedirs(self.data_transformation_config.TRANSFORMED_TRAIN_DATA_DIR, exist_ok=True)
-            transformed_train_file = self.data_transformation_config.UTILS.save_numpy_array_data(self.data_transformation_config.TRANSFORMED_TRAIN_FILE_PATH, train_arr)
-            logger.info(f"Saved train array to {os.path.basename(self.data_transformation_config.DATA_TRANSFORMATION_ARTIFACTS_DIR)}")
+            os.makedirs(
+                self.data_transformation_config.TRANSFORMED_TRAIN_DATA_DIR,
+                exist_ok=True,
+            )
+            transformed_train_file = self.data_transformation_config.UTILS.save_numpy_array_data(
+                self.data_transformation_config.TRANSFORMED_TRAIN_FILE_PATH, train_arr
+            )
+            logger.info(
+                f"Saved train array to {os.path.basename(self.data_transformation_config.DATA_TRANSFORMATION_ARTIFACTS_DIR)}"
+            )
 
             # Concatinating input feature array and target feature array of Test dataset
             test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
             logger.info("Created test array.")
 
             # Creating direcory for transformed test dataset array and saving the array
-            os.makedirs(self.data_transformation_config.TRANSFORMED_TEST_DATA_DIR, exist_ok=True)
-            transformed_test_file = self.data_transformation_config.UTILS.save_numpy_array_data(self.data_transformation_config.TRANSFORMED_TEST_FILE_PATH, test_arr)
-            logger.info(f"Saved test array to {os.path.basename(self.data_transformation_config.DATA_TRANSFORMATION_ARTIFACTS_DIR)}")
-            
+            os.makedirs(
+                self.data_transformation_config.TRANSFORMED_TEST_DATA_DIR, exist_ok=True
+            )
+            transformed_test_file = self.data_transformation_config.UTILS.save_numpy_array_data(
+                self.data_transformation_config.TRANSFORMED_TEST_FILE_PATH, test_arr
+            )
+            logger.info(
+                f"Saved test array to {os.path.basename(self.data_transformation_config.DATA_TRANSFORMATION_ARTIFACTS_DIR)}"
+            )
+
             # Saving the preprocessor object to data transformation artifacts directory
-            preprocessor_obj_file = self.data_transformation_config.UTILS.save_object(self.data_transformation_config.PREPROCESSOR_FILE_PATH, preprocessor)
-            logger.info("Saved the preprocessor object in DataTransformation artifacts directory.")
+            preprocessor_obj_file = self.data_transformation_config.UTILS.save_object(
+                self.data_transformation_config.PREPROCESSOR_FILE_PATH, preprocessor
+            )
+            logger.info(
+                "Saved the preprocessor object in DataTransformation artifacts directory."
+            )
             logger.info(
                 "Exited initiate_data_transformation method of Data_Transformation class"
             )
 
             # Saving data transformation artifacts
-            data_transformation_artifacts = DataTransformationArtifacts(transformed_object_file_path=preprocessor_obj_file, 
-                                                                        transformed_train_file_path=transformed_train_file,
-                                                                        transformed_test_file_path=transformed_test_file)
+            data_transformation_artifacts = DataTransformationArtifacts(
+                transformed_object_file_path=preprocessor_obj_file,
+                transformed_train_file_path=transformed_train_file,
+                transformed_test_file_path=transformed_test_file,
+            )
 
             return data_transformation_artifacts
 

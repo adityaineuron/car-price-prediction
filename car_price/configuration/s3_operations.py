@@ -14,14 +14,16 @@ import logging
 # initializing logger
 logger = logging.getLogger(__name__)
 
+
 class S3Operation:
     def __init__(self):
         self.s3_client = boto3.client("s3")
         self.s3_resource = boto3.resource("s3")
 
-
     @staticmethod
-    def read_object(object_name: str, decode: bool = True, make_readable: bool = False) -> Union[StringIO, str]:
+    def read_object(
+        object_name: str, decode: bool = True, make_readable: bool = False
+    ) -> Union[StringIO, str]:
 
         """
         Method Name :   read_object
@@ -45,7 +47,6 @@ class S3Operation:
         except Exception as e:
             raise CarException(e, sys) from e
 
-   
     def get_bucket(self, bucket_name: str) -> Bucket:
 
         """
@@ -63,7 +64,6 @@ class S3Operation:
 
         except Exception as e:
             raise CarException(e, sys) from e
-        
 
     def is_model_present(self, bucket_name: str, s3_model_key: str) -> bool:
 
@@ -76,7 +76,10 @@ class S3Operation:
         """
         try:
             bucket = self.get_bucket(bucket_name)
-            file_objects = [file_object for file_object in bucket.objects.filter(Prefix=s3_model_key)]
+            file_objects = [
+                file_object
+                for file_object in bucket.objects.filter(Prefix=s3_model_key)
+            ]
             if len(file_objects) > 0:
                 return True
             else:
@@ -85,8 +88,9 @@ class S3Operation:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
-    def get_file_object(self, filename: str, bucket_name: str) -> Union[List[object], object]:
+    def get_file_object(
+        self, filename: str, bucket_name: str
+    ) -> Union[List[object], object]:
         """
         Method Name :   get_file_object
 
@@ -107,8 +111,9 @@ class S3Operation:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
-    def load_model(self, model_name: str, bucket_name: str, model_dir: str = None) -> object:
+    def load_model(
+        self, model_name: str, bucket_name: str, model_dir: str = None
+    ) -> object:
 
         """
         Method Name :   load_model
@@ -120,7 +125,11 @@ class S3Operation:
         logger.info("Entered the load_model method of S3Operations class")
 
         try:
-            func = (lambda: model_name if model_dir is None else model_dir + "/" + model_name)
+            func = (
+                lambda: model_name
+                if model_dir is None
+                else model_dir + "/" + model_name
+            )
             model_file = func()
             f_obj = self.get_file_object(model_file, bucket_name)
             model_obj = self.read_object(f_obj, decode=False)
@@ -130,7 +139,6 @@ class S3Operation:
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     def create_folder(self, folder_name: str, bucket_name: str) -> None:
 
@@ -154,8 +162,13 @@ class S3Operation:
                 pass
             logger.info("Exited the create_folder method of S3Operations class")
 
-
-    def upload_file(self, from_filename: str, to_filename: str, bucket_name: str, remove: bool = True) -> None:
+    def upload_file(
+        self,
+        from_filename: str,
+        to_filename: str,
+        bucket_name: str,
+        remove: bool = True,
+    ) -> None:
 
         """
         Method Name :   upload_file
@@ -187,9 +200,8 @@ class S3Operation:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     def upload_folder(self, folder_name: str, bucket_name: str) -> None:
-        
+
         """
         Method Name :   upload_file
 
@@ -209,8 +221,13 @@ class S3Operation:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
-    def upload_df_as_csv(self, data_frame: DataFrame, local_filename: str, bucket_filename: str, bucket_name: str) -> None:
+    def upload_df_as_csv(
+        self,
+        data_frame: DataFrame,
+        local_filename: str,
+        bucket_filename: str,
+        bucket_name: str,
+    ) -> None:
 
         """
         Method Name :   upload_df_as_csv
@@ -227,7 +244,6 @@ class S3Operation:
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     def get_df_from_object(self, object_: object) -> DataFrame:
 
@@ -248,7 +264,6 @@ class S3Operation:
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     def read_csv(self, filename: str, bucket_name: str) -> DataFrame:
 

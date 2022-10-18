@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 
 class MainUtils:
-
     def read_yaml_file(self, filename: str) -> dict:
         logger.info("Entered the read_yaml_file method of MainUtils class")
         try:
@@ -30,22 +29,20 @@ class MainUtils:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     def write_json_to_yaml_file(self, json_file: dict, yaml_file_path: str) -> yaml:
         logger.info("Entered the write_json_to_yaml_file method of MainUtils class")
         try:
             data = json_file
-            stream = open(yaml_file_path, 'w')
+            stream = open(yaml_file_path, "w")
             yaml.dump(data, stream)
 
         except Exception as e:
             raise CarException(e, sys) from e
 
-        
     def save_numpy_array_data(self, file_path: str, array: np.array):
         logger.info("Entered the save_numpy_array_data method of MainUtils class")
         try:
-            with open(file_path, 'wb') as file_obj:
+            with open(file_path, "wb") as file_obj:
                 np.save(file_obj, array)
             logger.info("Exited the save_numpy_array_data method of MainUtils class")
             return file_path
@@ -53,18 +50,23 @@ class MainUtils:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     def load_numpy_array_data(self, file_path: str) -> np.array:
         logger.info("Entered the load_numpy_array_data method of MainUtils class")
         try:
-            with open(file_path, 'rb') as file_obj:
+            with open(file_path, "rb") as file_obj:
                 return np.load(file_obj)
 
         except Exception as e:
             raise CarException(e, sys) from e
 
-
-    def get_tuned_model(self, model_name: str, train_x: DataFrame, train_y: DataFrame, test_x: DataFrame, test_y: DataFrame) -> Tuple[float, object, str]:
+    def get_tuned_model(
+        self,
+        model_name: str,
+        train_x: DataFrame,
+        train_y: DataFrame,
+        test_x: DataFrame,
+        test_y: DataFrame,
+    ) -> Tuple[float, object, str]:
         logger.info("Entered the get_tuned_model method of MainUtils class")
         try:
             model = self.get_base_model(model_name)
@@ -79,7 +81,6 @@ class MainUtils:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     @staticmethod
     def get_model_score(test_y: DataFrame, preds: DataFrame) -> float:
         logger.info("Entered the get_model_score method of MainUtils class")
@@ -91,7 +92,6 @@ class MainUtils:
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     @staticmethod
     def get_base_model(model_name: str) -> object:
@@ -108,8 +108,9 @@ class MainUtils:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
-    def get_model_params(self, model: object, x_train: DataFrame, y_train: DataFrame) -> Dict:
+    def get_model_params(
+        self, model: object, x_train: DataFrame, y_train: DataFrame
+    ) -> Dict:
         logger.info("Entered the get_model_params method of MainUtils class")
         try:
             VERBOSE = 3
@@ -119,14 +120,15 @@ class MainUtils:
             model_name = model.__class__.__name__
             model_config = self.read_yaml_file(filename=MODEL_CONFIG_FILE)
             model_param_grid = model_config["train_model"][model_name]
-            model_grid = GridSearchCV(model, model_param_grid, verbose=VERBOSE, cv=CV, n_jobs=N_JOBS)
+            model_grid = GridSearchCV(
+                model, model_param_grid, verbose=VERBOSE, cv=CV, n_jobs=N_JOBS
+            )
             model_grid.fit(x_train, y_train)
             logger.info("Exited the get_model_params method of MainUtils class")
             return model_grid.best_params_
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     @staticmethod
     def save_object(file_path: str, obj: object) -> None:
@@ -141,7 +143,6 @@ class MainUtils:
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     @staticmethod
     def get_best_model_with_name_and_score(model_list: list) -> Tuple[object, float]:
@@ -159,7 +160,6 @@ class MainUtils:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     @staticmethod
     def load_object(file_path: str) -> object:
         logger.info("Entered the load_object method of MainUtils class")
@@ -172,7 +172,6 @@ class MainUtils:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     @staticmethod
     def create_artifacts_zip(file_name: str, folder_name: str) -> None:
         logger.info("Entered the create_artifacts_zip method of MainUtils class")
@@ -183,7 +182,6 @@ class MainUtils:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     @staticmethod
     def unzip_file(filename: str, folder_name: str) -> None:
         logger.info("Entered the unzip_file method of MainUtils class")
@@ -193,7 +191,6 @@ class MainUtils:
 
         except Exception as e:
             raise CarException(e, sys) from e
-
 
     def update_model_score(self, best_model_score: float) -> None:
         logger.info("Entered the update_model_score method of MainUtils class")
@@ -207,12 +204,11 @@ class MainUtils:
         except Exception as e:
             raise CarException(e, sys) from e
 
-
     def get_car_list(self) -> List:
         logger.info("Entered the get_car_list method of MainUtils class")
         try:
             with open(CONFIG_FILE_PATH) as f:
-                data =  yaml.safe_load(f)
+                data = yaml.safe_load(f)
             car_list = data["car_list"]
             logger.info("Exited the get_car_list method of MainUtils class")
             return car_list

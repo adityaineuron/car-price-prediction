@@ -15,7 +15,7 @@ app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-templates = Jinja2Templates(directory='templates')
+templates = Jinja2Templates(directory="templates")
 
 
 origins = ["*"]
@@ -27,6 +27,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 class DataForm:
     def __init__(self, request: Request):
@@ -41,10 +42,9 @@ class DataForm:
         self.engine: Optional[str] = None
         self.max_power: Optional[str] = None
         self.seats: Optional[str] = None
-        
 
     async def get_car_data(self):
-        form =  await self.request.form()
+        form = await self.request.form()
         self.car_name = form.get("car_name")
         self.vehicle_age = form.get("vehicle_age")
         self.km_driven = form.get("km_driven")
@@ -55,6 +55,7 @@ class DataForm:
         self.engine = form.get("engine")
         self.max_power = form.get("max_power")
         self.seats = form.get("seats")
+
 
 @app.get("/train")
 async def trainRouteClient():
@@ -68,6 +69,7 @@ async def trainRouteClient():
     except Exception as e:
         return Response(f"Error Occurred! {e}")
 
+
 @app.get("/predict")
 async def predictGetRouteClient(request: Request):
     try:
@@ -76,10 +78,13 @@ async def predictGetRouteClient(request: Request):
         car_list = utils.get_car_list()
 
         return templates.TemplateResponse(
-            "car_price.html",{"request": request, "context": "Rendering", "car_list": car_list})
+            "car_price.html",
+            {"request": request, "context": "Rendering", "car_list": car_list},
+        )
 
     except Exception as e:
         return Response(f"Error Occurred! {e}")
+
 
 @app.post("/predict")
 async def predictRouteClient(request: Request):
@@ -88,30 +93,32 @@ async def predictRouteClient(request: Request):
         car_list = utils.get_car_list()
         form = DataForm(request)
         await form.get_car_data()
-        
-        car_price_data = CarData(car_name= form.car_name, 
-                                   vehicle_age= form.vehicle_age, 
-                                   km_driven= form.km_driven, 
-                                   seller_type= form.seller_type, 
-                                   fuel_type= form.fuel_type, 
-                                   transmission_type= form.transmission_type, 
-                                   mileage= form.mileage,
-                                   engine= form.engine,
-                                   max_power = form.max_power,
-                                   seats = form.seats
-                                   )
-        
+
+        car_price_data = CarData(
+            car_name=form.car_name,
+            vehicle_age=form.vehicle_age,
+            km_driven=form.km_driven,
+            seller_type=form.seller_type,
+            fuel_type=form.fuel_type,
+            transmission_type=form.transmission_type,
+            mileage=form.mileage,
+            engine=form.engine,
+            max_power=form.max_power,
+            seats=form.seats,
+        )
+
         car_price_df = car_price_data.get_carprice_input_data_frame()
         car_price_predictor = CarPricePredictor()
         car_price_value = round(car_price_predictor.predict(X=car_price_df)[0], 2)
 
         return templates.TemplateResponse(
             "car_price.html",
-            {"request": request, "context": car_price_value, "car_list": car_list}
+            {"request": request, "context": car_price_value, "car_list": car_list},
         )
 
     except Exception as e:
         return {"status": False, "error": f"{e}"}
+
 
 if __name__ == "__main__":
     app_run(app, host=APP_HOST, port=APP_PORT)
