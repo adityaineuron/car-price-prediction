@@ -4,3 +4,5 @@ env
 venv
 notebooks
 demo.py
+build
+dist
