@@ -30,7 +30,7 @@ git clone https://github.com/Machine-Learning-01/car-price-prediction.git
 ```
 Step 2. Create a conda environment.
 ```
-conda create --prefix venv python=3.9 -y
+conda create --prefix venv python=3.7 -y
 ```
 ```
 conda activate venv/
